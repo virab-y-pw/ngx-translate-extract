@@ -16,7 +16,8 @@
     "watch": "npm run clean && tsc --watch",
     "clean": "rimraf ./dist",
     "lint": "tslint --force './src/**/*.ts'",
-    "test": "cross-env TS_NODE_PROJECT=\"tsconfig.spec.json\" mocha -r ts-node/register tests/**/*.spec.ts"
+    "test": "cross-env TS_NODE_PROJECT=\"tsconfig.spec.json\" mocha -r ts-node/register tests/**/*.spec.ts",
+    "publish:next": "npm run build && npm publish --tag next --access public"
   },
   "husky": {
     "hooks": {
@@ -38,7 +39,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/bartholomej/ngx-translate-extract.git"
+    "url": "git+https://github.com/bartholomej/ngx-translate-extract.git"
   },
   "keywords": [
     "angular",
@@ -98,5 +99,8 @@
     "path": "^0.12.7",
     "terminal-link": "^3.0.0",
     "yargs": "^17.5.1"
+  },
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org"
   }
 }
