@@ -17,7 +17,7 @@ import { PurgeObsoleteKeysPostProcessor } from '../post-processors/purge-obsolet
 import { CompilerInterface } from '../compilers/compiler.interface.js';
 import { CompilerFactory } from '../compilers/compiler.factory.js';
 import { normalizePaths } from '../utils/fs-helpers.js';
-import { donateMessage } from '../utils/donate.js';
+// import { donateMessage } from '../utils/donate.js';
 
 // First parsing pass to be able to access pattern argument for use input/output arguments
 const y = yargs().option('patterns', {
@@ -28,9 +28,10 @@ const y = yargs().option('patterns', {
 	hidden: true
 });
 
-const parsed = y.parse();
+const parsed = y.parse() as any; // temporary any
 
-export const cli = y
+// temporary any
+export const cli: any = y
 	.usage('Extract strings from files for translation.\nUsage: $0 [options]')
 	.version(process.env.npm_package_version)
 	.alias('version', 'v')
@@ -154,7 +155,7 @@ extractTask.setCompiler(compiler);
 try {
 	extractTask.execute();
 	console.log(green('\nDone.\n'));
-	console.log(donateMessage);
+	// console.log(donateMessage);
 	process.exit(0);
 } catch (e) {
 	console.log(red(`\nAn error occurred: ${e}\n`));
