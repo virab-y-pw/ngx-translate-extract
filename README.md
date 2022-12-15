@@ -1,8 +1,3 @@
-This is a fork of a great library by Biesbjerg.
-(But the original Beisbjerg's library is unfortunately no longer being developed)
-
-This library adds compatibility for **Angular 13** and **Angular 14**...
-
 # ngx-translate-extract
 
 > Angular translations extractor (plugin for [@ngx-translate](https://github.com/ngx-translate/core))
@@ -12,13 +7,17 @@ This library adds compatibility for **Angular 13** and **Angular 14**...
 Extract translatable (ngx-translate) strings and save as a JSON or Gettext pot file.
 Merges with existing strings if the output file already exists.
 
+## History
+
+This project was originally created by [Kim Biesbjerg](https://github.com/biesbjerg/ngx-translate-extract). Unfortunately he was unable to continue to maintain it so the Vendure team agreed to take over maintenance of a fork.
+
 ## Install
 
 Install the package in your project:
 
 ```bash
-npm install @bartholomej/ngx-translate-extract --save-dev
-# yarn add @bartholomej/ngx-translate-extract --dev
+npm install @vendure/ngx-translate-extract --save-dev
+# yarn add @vendure/ngx-translate-extract --dev
 ```
 
 Choose the version corresponding to your Angular version:
@@ -142,4 +141,5 @@ Please pay attention of which version of `gettext-parser` you actually use in yo
 
 ## Credits
 
-- Original library, idea and code: [@biesbjerg/ngx-translate-extract](https://github.com/biesbjerg/ngx-translate-extract) ❤️
+- Original library, idea and code: [Kim Biesbjerg](https://github.com/biesbjerg/ngx-translate-extract) ❤️
+- Further updates and improvements were then made by [bartholomej](https://github.com/bartholomej)
