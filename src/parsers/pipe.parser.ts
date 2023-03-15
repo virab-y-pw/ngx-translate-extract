@@ -17,7 +17,7 @@ import { ParserInterface } from './parser.interface.js';
 import { TranslationCollection } from '../utils/translation.collection.js';
 import { isPathAngularComponent, extractComponentInlineTemplate } from '../utils/utils.js';
 
-const TRANSLATE_PIPE_NAME = 'translate';
+export const TRANSLATE_PIPE_NAMES = ['translate', 'marker'];
 
 export class PipeParser implements ParserInterface {
 	public extract(source: string, filePath: string): TranslationCollection | null {
@@ -54,9 +54,7 @@ export class PipeParser implements ParserInterface {
 		}
 
 		if (node?.attributes) {
-			const translateableAttributes = node.attributes.filter((attr: TmplAstTextAttribute) => {
-				return attr.name === TRANSLATE_PIPE_NAME;
-			});
+			const translateableAttributes = node.attributes.filter((attr: TmplAstTextAttribute) => TRANSLATE_PIPE_NAMES.includes(attr.name));
 			ret = [...ret, ...translateableAttributes];
 		}
 
@@ -100,7 +98,7 @@ export class PipeParser implements ParserInterface {
 			// the entire expression is the translate pipe, e.g.:
 			// - 'foo' | translate
 			// - (condition ? 'foo' : 'bar') | translate
-			if (ast.name === TRANSLATE_PIPE_NAME) {
+			if (TRANSLATE_PIPE_NAMES.includes(ast.name)) {
 				// also visit the pipe arguments - interpolateParams object
 				return [ast, ...this.getTranslatablesFromAsts(ast.args)];
 			}

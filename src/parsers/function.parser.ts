@@ -2,24 +2,25 @@ import { tsquery } from '@phenomnomnominal/tsquery';
 
 import { ParserInterface } from './parser.interface.js';
 import { TranslationCollection } from '../utils/translation.collection.js';
-import { getNamedImportAlias, findFunctionCallExpressions, getStringsFromExpression } from '../utils/ast-helpers.js';
+import { getStringsFromExpression, findSimpleCallExpressions } from '../utils/ast-helpers.js';
+import pkg from 'typescript';
+const { isIdentifier } = pkg;
 
-const MARKER_MODULE_NAME = 'ngx-translate-extract-marker';
-const MARKER_IMPORT_NAME = 'marker';
+export class FunctionParser implements ParserInterface {
+	constructor(private fnName: string) {}
 
-export class MarkerParser implements ParserInterface {
 	public extract(source: string, filePath: string): TranslationCollection | null {
 		const sourceFile = tsquery.ast(source, filePath);
 
-		const markerImportName = getNamedImportAlias(sourceFile, MARKER_MODULE_NAME, MARKER_IMPORT_NAME);
-		if (!markerImportName) {
-			return null;
-		}
-
 		let collection: TranslationCollection = new TranslationCollection();
 
-		const callExpressions = findFunctionCallExpressions(sourceFile, markerImportName);
+		const callExpressions = findSimpleCallExpressions(sourceFile, this.fnName);
 		callExpressions.forEach((callExpression) => {
+			if (!isIdentifier(callExpression.expression)
+			    || callExpression.expression.escapedText != this.fnName) {
+				return
+			}
+
 			const [firstArg] = callExpression.arguments;
 			if (!firstArg) {
 				return;
