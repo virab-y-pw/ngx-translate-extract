@@ -1,7 +1,7 @@
 # Changelog
 
 
-## v8.0.6 (2023-03-TODO)
+## v8.1.0 (2023-03-15)
 
 - Accommodate marker pipe and directive
 - Enable support for other marker packages apart from the original from [Kim Biesbjerg](https://github.com/biesbjerg/ngx-translate-extract-marker)
@@ -10,6 +10,7 @@
 - Re-added --marker/-m option to CLI thanks to [tmijieux's](https://github.com/tmijieux) [PR](https://github.com/colsen1991/ngx-translate-extract/pull/1)
 - Moved to eslint and fixed errors/warnings
 - Other minor clerical changes and small refactoring
+- Remove dependency on a specific version of the Angular compiler. Instead, we rely on the peer dependency. [#3](https://github.com/vendure-ecommerce/ngx-translate-extract/issues/3)
 
 ## v8.0.5 (2023-03-02)
 
