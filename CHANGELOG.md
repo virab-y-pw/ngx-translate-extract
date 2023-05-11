@@ -1,5 +1,8 @@
 # Changelog
 
+## v8.1.1 (2023-05-11)
+
+- Update tsquery dependency to allow usage with TypeScript v5 ([#10](https://github.com/vendure-ecommerce/ngx-translate-extract/pull/10))
 
 ## v8.1.0 (2023-03-15)
 
