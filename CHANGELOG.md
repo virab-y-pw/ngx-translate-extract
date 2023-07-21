@@ -1,7 +1,11 @@
 # Changelog
 
+## v8.2.1 (2023-07-21)
+- Fix extraction error introduced in the last version ([#14](https://github.com/vendure-ecommerce/ngx-translate-extract/issues/14))
+- Add `braces` to dependencies ([#9](https://github.com/vendure-ecommerce/ngx-translate-extract/pull/9))
+
 ## v8.2.0 (2023-07-03)
-- Add source locations in PO compiler output ([#9](https://github.com/vendure-ecommerce/ngx-translate-extract/pull/9))
+- Add source locations in PO compiler output ([#13](https://github.com/vendure-ecommerce/ngx-translate-extract/pull/13))
 
 ## v8.1.1 (2023-05-11)
 
