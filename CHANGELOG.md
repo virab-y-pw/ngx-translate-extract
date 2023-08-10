@@ -1,5 +1,8 @@
 # Changelog
 
+## v8.2.2 (2023-08-10)
+- Fix extraction error with --null-as-default-value ([#18](https://github.com/vendure-ecommerce/ngx-translate-extract/issues/18))
+
 ## v8.2.1 (2023-07-21)
 - Fix extraction error introduced in the last version ([#14](https://github.com/vendure-ecommerce/ngx-translate-extract/issues/14))
 - Add `braces` to dependencies ([#9](https://github.com/vendure-ecommerce/ngx-translate-extract/pull/9))
