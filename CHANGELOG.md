@@ -1,5 +1,11 @@
 # Changelog
 
+## v8.2.3 (2023-09-27)
+- Enable extraction from subclasses without declaration ([#21](https://github.com/vendure-ecommerce/ngx-translate-extract/pull/21))
+- Fix chained function calls ([#21](https://github.com/vendure-ecommerce/ngx-translate-extract/pull/21))
+- Add tests ([#21](https://github.com/vendure-ecommerce/ngx-translate-extract/pull/21))
+- Extract translations when service injected using `inject()` function  ([#22](https://github.com/vendure-ecommerce/ngx-translate-extract/pull/22))
+
 ## v8.2.2 (2023-08-10)
 - Fix extraction error with --null-as-default-value ([#18](https://github.com/vendure-ecommerce/ngx-translate-extract/issues/18))
 
