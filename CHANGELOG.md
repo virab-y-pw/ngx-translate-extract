@@ -1,5 +1,8 @@
 # Changelog
 
+## v8.3.0 (in progress)
+- Add support for the `--strip-prefix` option ([#23](https://github.com/vendure-ecommerce/ngx-translate-extract/pull/23))
+
 ## v8.2.3 (2023-09-27)
 - Enable extraction from subclasses without declaration ([#21](https://github.com/vendure-ecommerce/ngx-translate-extract/pull/21))
 - Fix chained function calls ([#21](https://github.com/vendure-ecommerce/ngx-translate-extract/pull/21))
