@@ -1,5 +1,15 @@
 # Changelog
 
+## v9.0.0 (2023-11-21)
+
+- feat: Add support for new Angular v17 control flow syntax ([#27](https://github.com/vendure-ecommerce/ngx-translate-extract/pull/27))
+
+**BREAKING CHANGES**
+
+- minimum angular version required bumped to 17
+- minimum node version required bumped to v18.13.0 to be aligned with the Angular 17 requirements
+- minimum TypeScript version required bumped to v5.2 to be aligned with the Angular 17 requirements
+
 ## v8.3.0 (2023-11-21)
 - Add support for the `--strip-prefix` option ([#23](https://github.com/vendure-ecommerce/ngx-translate-extract/pull/23))
 
