@@ -1,6 +1,6 @@
 # Changelog
 
-## v8.3.0 (in progress)
+## v8.3.0 (2023-11-21)
 - Add support for the `--strip-prefix` option ([#23](https://github.com/vendure-ecommerce/ngx-translate-extract/pull/23))
 
 ## v8.2.3 (2023-09-27)
