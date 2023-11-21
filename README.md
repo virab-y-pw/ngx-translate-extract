@@ -2,7 +2,7 @@
 
 > Angular translations extractor (plugin for [@ngx-translate](https://github.com/ngx-translate/core))
 
-> ✓ _Angular 14, Ivy and Angular Universal (SSR) compatible_
+> ✓ _Angular 14+, Ivy and Angular Universal (SSR) compatible_
 
 Extract translatable (ngx-translate) strings and save as a JSON or Gettext pot file.
 Merges with existing strings if the output file already exists.
@@ -10,7 +10,7 @@ Merges with existing strings if the output file already exists.
 ## History
 
 This project was originally created by [Kim Biesbjerg](https://github.com/biesbjerg/ngx-translate-extract).
-Unfortunately he was unable to continue to maintain it so the Vendure team agreed to take over maintenance of a fork.
+Unfortunately he was unable to continue to maintain it so the Vendure team [agreed to take over maintenance](https://github.com/biesbjerg/ngx-translate-extract/issues/246#issuecomment-1211682548) of this fork.
 
 ## Install
 
