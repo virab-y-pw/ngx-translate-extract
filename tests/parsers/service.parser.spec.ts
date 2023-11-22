@@ -467,7 +467,11 @@ describe('ServiceParser', () => {
 		const tsconfig_contents = `
 			{
 				"compilerOptions": {
-					"baseUrl": "./"
+					"baseUrl": "./",
+					"lib": [
+						"es2020",
+						"dom",
+					],
 				}
 			}
 		`;

@@ -19,6 +19,7 @@
     "flat": "^5.0.2",
     "gettext-parser": "^4.2.0",
     "glob": "^7.2.0",
+    "json5": "^2.2.3",
     "path": "^0.12.7",
     "terminal-link": "^3.0.0",
     "tsconfig": "^7.0.0",
