@@ -1,4 +1,9 @@
-import { ClassDeclaration, CallExpression, StringLiteral, SourceFile } from 'typescript';
+import path from 'node:path';
+import fs from 'node:fs';
+
+import { ClassDeclaration, CallExpression, SourceFile } from 'typescript';
+import { resolveSync } from 'tsconfig';
+import JSON5 from 'json5';
 import { tsquery } from '@phenomnomnominal/tsquery';
 
 import { ParserInterface } from './parser.interface.js';
@@ -14,9 +19,6 @@ import {
 	getSuperClassName,
 	getImportPath
 } from '../utils/ast-helpers.js';
-import * as path from 'path';
-import * as fs from 'fs';
-import { loadSync } from 'tsconfig';
 
 const TRANSLATE_SERVICE_TYPE_REFERENCE = 'TranslateService';
 const TRANSLATE_SERVICE_METHOD_NAMES = ['get', 'instant', 'stream'];
@@ -97,12 +99,16 @@ export class ServiceParser implements ParserInterface {
 			superClassPath = importPath;
 		} else {
 			// absolute import, use baseUrl if present
-			const config = loadSync(currDir);
-			let baseUrl = config?.config?.compilerOptions?.baseUrl;
-			if (baseUrl) {
-				baseUrl = path.resolve(path.dirname(config.path), baseUrl);
+			let baseUrl = currDir;
+			const tsconfigFilePath = resolveSync(currDir);
+			if (tsconfigFilePath) {
+				const tsConfigFile = fs.readFileSync(tsconfigFilePath);
+				const config = JSON5.parse(tsConfigFile.toString());
+				const compilerOptionsBaseUrl = config.compilerOptions?.baseUrl ?? '';
+				baseUrl = path.resolve(path.dirname(tsconfigFilePath), compilerOptionsBaseUrl);
 			}
-			superClassPath = path.resolve(baseUrl ?? currDir, importPath);
+
+			superClassPath = path.resolve(baseUrl, importPath);
 		}
 		const superClassFile = superClassPath + '.ts';
 		let potentialSuperFiles: string[];
