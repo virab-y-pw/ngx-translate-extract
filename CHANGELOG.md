@@ -1,5 +1,9 @@
 # Changelog
 
+## v9.0.2 (unreleased)
+
+- Fix import from glob packages ([#31](https://github.com/vendure-ecommerce/ngx-translate-extract/pull/31))
+
 ## v9.0.1 (2023-11-23)
 
 - Update dependencies & removed unused dependencies ([#29](https://github.com/vendure-ecommerce/ngx-translate-extract/pull/29))
