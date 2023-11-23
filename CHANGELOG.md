@@ -1,5 +1,10 @@
 # Changelog
 
+## v9.0.1 (2023-11-23)
+
+- Update dependencies & removed unused dependencies ([#29](https://github.com/vendure-ecommerce/ngx-translate-extract/pull/29))
+- fix: Fix syntax error when parsing tsconfig file ([#30](https://github.com/vendure-ecommerce/ngx-translate-extract/pull/30)) Fixes [#24](https://github.com/vendure-ecommerce/ngx-translate-extract/issues/24)
+
 ## v9.0.0 (2023-11-21)
 
 - feat: Add support for new Angular v17 control flow syntax ([#27](https://github.com/vendure-ecommerce/ngx-translate-extract/pull/27))
