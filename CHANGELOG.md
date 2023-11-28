@@ -1,5 +1,10 @@
 # Changelog
 
+## v9.0.3 (2023-11-28)
+
+- Fix `RangeError: Maximum call stack size exceeded` on nested templates ([#34](https://github.com/vendure-ecommerce/ngx-translate-extract/pull/34))
+- Fix alphabetical order of extracted keys ([#35](https://github.com/vendure-ecommerce/ngx-translate-extract/pull/35))
+
 ## v9.0.2 (2023-11-24)
 
 - Fix import from glob packages ([#31](https://github.com/vendure-ecommerce/ngx-translate-extract/pull/31))
