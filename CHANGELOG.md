@@ -1,5 +1,9 @@
 # Changelog
 
+## v9.1.0 (2024-02-05)
+
+- Add support for caching via the new `--cache-file` option ([#38](https://github.com/vendure-ecommerce/ngx-translate-extract/pull/38))
+
 ## v9.0.3 (2023-11-28)
 
 - Fix `RangeError: Maximum call stack size exceeded` on nested templates ([#34](https://github.com/vendure-ecommerce/ngx-translate-extract/pull/34))
