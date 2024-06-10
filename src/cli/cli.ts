@@ -81,6 +81,13 @@ const cli = await y
 		describe: 'Sort strings in alphabetical order',
 		type: 'boolean'
 	})
+	.option('sort-sensitivity', {
+		alias: 'ss',
+		describe: 'Sort sensitivitiy of strings (only to be used when sorting)',
+		type: 'string',
+		choices: ['base', 'accent', 'case', 'variant'],
+		default: undefined
+	})
 	.option('clean', {
 		alias: 'c',
 		describe: 'Remove obsolete strings after merge',
@@ -125,7 +132,7 @@ const cli = await y
 		describe: 'Strip a prefix from the extracted key',
 		type: 'string'
 	})
-	.group(['format', 'format-indentation', 'sort', 'clean', 'replace', 'strip-prefix'], 'Output')
+	.group(['format', 'format-indentation', 'sort', 'sort-sensitivity', 'clean', 'replace', 'strip-prefix'], 'Output')
 	.group(['key-as-default-value', 'key-as-initial-default-value', 'null-as-default-value', 'string-as-default-value'], 'Extracted key value (defaults to empty string)')
 	.conflicts('key-as-default-value', 'null-as-default-value')
 	.conflicts('key-as-initial-default-value', 'null-as-default-value')
@@ -177,7 +184,7 @@ if (cli.stripPrefix) {
 }
 
 if (cli.sort) {
-	postProcessors.push(new SortByKeyPostProcessor());
+	postProcessors.push(new SortByKeyPostProcessor(cli.sortSensitivity));
 }
 extractTask.setPostProcessors(postProcessors);
 
