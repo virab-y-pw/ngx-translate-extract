@@ -1,6 +1,13 @@
 # Changelog
 
-## v9.2.0-next.0 (2024-03-08)
+## v9.2.0 (2024-06-10)
+
+Contains all changes from `v9.2.0-next.0` plus:
+
+- Make sort sensitivity opt-in and configurable ([#41](https://github.com/vendure-ecommerce/ngx-translate-extract/pull/41))
+- Fix service and function parsing when used after bracket syntax casting expression ([#51](https://github.com/vendure-ecommerce/ngx-translate-extract/pull/51))
+
+## v9.2.0-next.0 (2024-05-21)
 
 This is a pre-release available as `@vendure/ngx-translate-extract@next`. Due to some significant refactors to internals,
 we are releasing a pre-release version to allow for testing before the final release.
