@@ -1,5 +1,9 @@
 # Changelog
 
+## v9.2.1 (2024-07-19)
+
+- Fix service parser to recognize the TranslateService property from an aliased superclass ([#53](https://github.com/vendure-ecommerce/ngx-translate-extract/pull/53))
+
 ## v9.2.0 (2024-06-10)
 
 Contains all changes from `v9.2.0-next.0` plus:
