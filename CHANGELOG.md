@@ -1,5 +1,10 @@
 # Changelog
 
+## v9.3.0 (2024-11-18)
+
+- Fix parser not locating `TranslateService` in private fields using the `#` syntax ([#55](https://github.com/vendure-ecommerce/ngx-translate-extract/pull/55))
+- Add support for the ngx-translate `_()` marker function ([#57](https://github.com/vendure-ecommerce/ngx-translate-extract/pull/57))
+
 ## v9.2.1 (2024-07-19)
 
 - Fix service parser to recognize the TranslateService property from an aliased superclass ([#53](https://github.com/vendure-ecommerce/ngx-translate-extract/pull/53))
