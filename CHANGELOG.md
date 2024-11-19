@@ -1,5 +1,11 @@
 # Changelog
 
+## v9.3.1 (2024-11-19)
+
+- Resolve runtime error with CommonJS module imports from 'typescript' ([#60](https://github.com/vendure-ecommerce/ngx-translate-extract/pull/60))
+- Fix extraction of translation keys from nested function expressions ([#61](https://github.com/vendure-ecommerce/ngx-translate-extract/pull/61))
+
+
 ## v9.3.0 (2024-11-18)
 
 - Fix parser not locating `TranslateService` in private fields using the `#` syntax ([#55](https://github.com/vendure-ecommerce/ngx-translate-extract/pull/55))
