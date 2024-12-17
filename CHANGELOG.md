@@ -1,5 +1,10 @@
 # Changelog
 
+## v9.4.0 (2024-12-17)
+
+- Use relative paths in .po file source comments
+- Add `po-source-locations` CLI option to control whether source locations are included in .po files ([#63](https://github.com/vendure-ecommerce/ngx-translate-extract/pull/63))
+
 ## v9.3.1 (2024-11-19)
 
 - Resolve runtime error with CommonJS module imports from 'typescript' ([#60](https://github.com/vendure-ecommerce/ngx-translate-extract/pull/60))
