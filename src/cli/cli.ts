@@ -29,7 +29,7 @@ const y = yargs().option('patterns', {
 	type: 'array',
 	default: ['/**/*.html', '/**/*.ts'],
 	string: true,
-	hidden: true
+	hidden: true,
 });
 
 const parsed = await y.parse();
@@ -46,7 +46,7 @@ const cli = await y
 		default: [process.env.PWD],
 		type: 'array',
 		normalize: true,
-		demandOption: true
+		demandOption: true,
 	})
 	.coerce('input', (input: string[]) => normalizePaths(input, parsed.patterns))
 	.option('output', {
@@ -54,37 +54,42 @@ const cli = await y
 		describe: 'Paths where you would like to save extracted strings. You can use path expansion, glob patterns and multiple paths',
 		type: 'array',
 		normalize: true,
-		demandOption: true
+		demandOption: true,
 	})
 	.coerce('output', (output: string[]) => normalizePaths(output, parsed.patterns))
 	.option('format', {
 		alias: 'f',
 		describe: 'Format',
 		default: CompilerType.Json,
-		choices: [CompilerType.Json, CompilerType.NamespacedJson, CompilerType.Pot]
+		choices: [CompilerType.Json, CompilerType.NamespacedJson, CompilerType.Pot],
 	})
 	.option('format-indentation', {
 		alias: 'fi',
 		describe: 'Format indentation (JSON/Namedspaced JSON)',
 		default: '\t',
-		type: 'string'
+		type: 'string',
 	})
 	.option('replace', {
 		alias: 'r',
 		describe: 'Replace the contents of output file if it exists (Merges by default)',
-		type: 'boolean'
+		type: 'boolean',
 	})
 	.option('sort', {
 		alias: 's',
 		describe: 'Sort strings in alphabetical order',
-		type: 'boolean'
+		type: 'boolean',
+	})
+	.option('sort-original-order', {
+		alias: 'soo',
+		describe: 'Sort only extracted values and adds them into the order of the original translations file',
+		type: 'boolean',
 	})
 	.option('sort-sensitivity', {
 		alias: 'ss',
 		describe: 'Sort sensitivitiy of strings (only to be used when sorting)',
 		type: 'string',
 		choices: ['base', 'accent', 'case', 'variant'],
-		default: undefined
+		default: undefined,
 	})
 	.option('po-source-locations', {
 		describe: 'Include file location comments in .po files',
@@ -94,49 +99,52 @@ const cli = await y
 	.option('clean', {
 		alias: 'c',
 		describe: 'Remove obsolete strings after merge',
-		type: 'boolean'
+		type: 'boolean',
 	})
 	.option('cache-file', {
 		describe: 'Cache parse results to speed up consecutive runs',
-		type: 'string'
+		type: 'string',
 	})
 	.option('marker', {
 		alias: 'm',
 		describe: 'Name of a custom marker function for extracting strings',
 		type: 'string',
-		default: undefined
+		default: undefined,
 	})
 	.option('key-as-default-value', {
 		alias: 'k',
 		describe: 'Use key as default value',
 		type: 'boolean',
-		conflicts: ['key-as-initial-default-value', 'null-as-default-value', 'string-as-default-value']
+		conflicts: ['key-as-initial-default-value', 'null-as-default-value', 'string-as-default-value'],
 	})
 	.option('key-as-initial-default-value', {
 		alias: 'ki',
 		describe: 'Use key as initial default value',
 		type: 'boolean',
-		conflicts: ['key-as-default-value', 'null-as-default-value', 'string-as-default-value']
+		conflicts: ['key-as-default-value', 'null-as-default-value', 'string-as-default-value'],
 	})
 	.option('null-as-default-value', {
 		alias: 'n',
 		describe: 'Use null as default value',
 		type: 'boolean',
-		conflicts: ['key-as-default-value', 'key-as-initial-default-value', 'string-as-default-value']
+		conflicts: ['key-as-default-value', 'key-as-initial-default-value', 'string-as-default-value'],
 	})
 	.option('string-as-default-value', {
 		alias: 'd',
 		describe: 'Use string as default value',
 		type: 'string',
-		conflicts: ['null-as-default-value', 'key-as-default-value', 'key-as-initial-default-value']
+		conflicts: ['null-as-default-value', 'key-as-default-value', 'key-as-initial-default-value'],
 	})
 	.option('strip-prefix', {
 		alias: 'sp',
 		describe: 'Strip a prefix from the extracted key',
-		type: 'string'
+		type: 'string',
 	})
 	.group(['format', 'format-indentation', 'sort', 'sort-sensitivity', 'clean', 'replace', 'strip-prefix', 'po-source-locations'], 'Output')
-	.group(['key-as-default-value', 'key-as-initial-default-value', 'null-as-default-value', 'string-as-default-value'], 'Extracted key value (defaults to empty string)')
+	.group(
+		['key-as-default-value', 'key-as-initial-default-value', 'null-as-default-value', 'string-as-default-value'],
+		'Extracted key value (defaults to empty string)',
+	)
 	.conflicts('key-as-default-value', 'null-as-default-value')
 	.conflicts('key-as-initial-default-value', 'null-as-default-value')
 	.example('$0 -i ./src-a/ -i ./src-b/ -o strings.json', 'Extract (ts, html) from multiple paths')
@@ -151,7 +159,7 @@ const cli = await y
 	.parse(process.argv);
 
 const extractTask = new ExtractTask(cli.input, cli.output, {
-	replace: cli.replace
+	replace: cli.replace,
 });
 
 // Parsers
@@ -187,6 +195,10 @@ if (cli.stripPrefix) {
 }
 
 if (cli.sort) {
+	postProcessors.push(new SortByKeyPostProcessor(cli.sortSensitivity));
+}
+
+if (cli.sortOriginalOrder) {
 	postProcessors.push(new SortByKeyPostProcessor(cli.sortSensitivity));
 }
 extractTask.setPostProcessors(postProcessors);
