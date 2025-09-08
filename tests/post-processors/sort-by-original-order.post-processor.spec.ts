@@ -1,7 +1,6 @@
 import { describe, beforeEach, expect, it } from 'vitest';
 
 import { PostProcessorInterface } from '../../src/post-processors/post-processor.interface.js';
-import { SortByKeyPostProcessor } from '../../src/post-processors/sort-by-key.post-processor.js';
 import { TranslationCollection } from '../../src/utils/translation.collection.js';
 import { SortByOriginalOrderPostProcessor } from '../../src/post-processors/sort-by-original-order.post-processor.js';
 
@@ -27,7 +26,12 @@ describe('SortByKeyPostProcessor - undefined sort sensitivity should sort as var
 			'9': { value: 'a numeric key', sourceFiles: [] },
 			b: { value: 'another value', sourceFiles: [] },
 		});
-		const extracted = new TranslationCollection();
+		const extracted = new TranslationCollection({
+			z: { value: 'last value', sourceFiles: [] },
+			a: { value: 'a value', sourceFiles: [] },
+			'9': { value: 'a numeric key', sourceFiles: [] },
+			b: { value: 'another value', sourceFiles: [] },
+		});
 		const existing = new TranslationCollection();
 
 		// Assert all values are processed correctly
