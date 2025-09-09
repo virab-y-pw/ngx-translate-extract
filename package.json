@@ -68,6 +68,6 @@
     "npm": ">=10"
   },
   "publishConfig": {
-    "registry": "https://registry.npmjs.org"
+    "registry": "https://nexus.prewave.ai/repository/network-npm"
   }
 }

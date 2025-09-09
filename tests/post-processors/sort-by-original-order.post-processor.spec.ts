@@ -20,22 +20,18 @@ describe('SortByKeyPostProcessor - undefined sort sensitivity should sort as var
 	});
 
 	it('should sort keys alphanumerically in an empty existing collection', () => {
-		const collection = new TranslationCollection({
-			z: { value: 'last value', sourceFiles: [] },
-			a: { value: 'a value', sourceFiles: [] },
-			'9': { value: 'a numeric key', sourceFiles: [] },
-			b: { value: 'another value', sourceFiles: [] },
-		});
+		// the draft is ignored for the processing, only the `extracted` and `existing` are used
+		const draft = new TranslationCollection();
+		const existing = new TranslationCollection();
 		const extracted = new TranslationCollection({
 			z: { value: 'last value', sourceFiles: [] },
 			a: { value: 'a value', sourceFiles: [] },
 			'9': { value: 'a numeric key', sourceFiles: [] },
 			b: { value: 'another value', sourceFiles: [] },
 		});
-		const existing = new TranslationCollection();
 
 		// Assert all values are processed correctly
-		expect(processor.process(collection, extracted, existing).values).to.deep.equal({
+		expect(processor.process(draft, extracted, existing).values).to.deep.equal({
 			'9': { value: 'a numeric key', sourceFiles: [] },
 			a: { value: 'a value', sourceFiles: [] },
 			b: { value: 'another value', sourceFiles: [] },
@@ -43,25 +39,12 @@ describe('SortByKeyPostProcessor - undefined sort sensitivity should sort as var
 		});
 
 		// Assert all keys are in the correct order
-		expect(processor.process(collection, extracted, existing).keys()).toStrictEqual(['9', 'a', 'b', 'z']);
+		expect(processor.process(draft, extracted, existing).keys()).toStrictEqual(['9', 'a', 'b', 'z']);
 	});
 
 	it('should perform variant sensitive sorting in a pre-filled existing collection', () => {
-		const extracted = new TranslationCollection({
-			'c.e.f': { value: 'letter c.e.f', sourceFiles: [] },
-			'c.e.d': { value: 'letter c.e.d', sourceFiles: [] },
-			b: { value: 'letter b', sourceFiles: [] },
-			a: { value: 'letter a', sourceFiles: [] },
-			à: { value: 'letter à', sourceFiles: [] },
-			h: { value: 'letter h', sourceFiles: [] },
-			B: { value: 'letter B', sourceFiles: [] },
-			H: { value: 'letter H', sourceFiles: [] },
-			'f.r.a.y': { value: 'letter f', sourceFiles: [] },
-			'f.r.a.i.l': { value: 'letter f', sourceFiles: [] },
-			C: { value: 'letter C', sourceFiles: [] },
-			e: { value: 'letter e', sourceFiles: [] },
-			i: { value: 'letter i', sourceFiles: [] },
-		});
+		// the draft is ignored for the processing, only the `extracted` and `existing` are used
+		const draft = new TranslationCollection();
 		const existing = new TranslationCollection({
 			H: { value: 'letter H', sourceFiles: [] },
 			'f.r.o.g': { value: 'letter f', sourceFiles: [] },
@@ -71,36 +54,37 @@ describe('SortByKeyPostProcessor - undefined sort sensitivity should sort as var
 			i: { value: 'letter i', sourceFiles: [] },
 			B: { value: 'letter B', sourceFiles: [] },
 		});
-		const collection = new TranslationCollection({
-			c: { value: 'letter c', sourceFiles: [] },
-			j: { value: 'letter j', sourceFiles: [] },
+		const extracted = new TranslationCollection({
+			'c.e.f': { value: 'letter c.e.f', sourceFiles: [] },
+			'c.e.d': { value: 'letter c.e.d', sourceFiles: [] },
 			b: { value: 'letter b', sourceFiles: [] },
 			a: { value: 'letter a', sourceFiles: [] },
 			à: { value: 'letter à', sourceFiles: [] },
 			h: { value: 'letter h', sourceFiles: [] },
 			B: { value: 'letter B', sourceFiles: [] },
 			H: { value: 'letter H', sourceFiles: [] },
-			i: { value: 'letter i', sourceFiles: [] },
+			'f.r.a.y': { value: 'letter f', sourceFiles: [] },
+			'f.r.a.i.l': { value: 'letter f', sourceFiles: [] },
 			C: { value: 'letter C', sourceFiles: [] },
 			e: { value: 'letter e', sourceFiles: [] },
-			f: { value: 'letter f', sourceFiles: [] },
-			d: { value: 'letter d', sourceFiles: [] },
-			A: { value: 'letter A', sourceFiles: [] },
-			g: { value: 'letter g', sourceFiles: [] },
+			i: { value: 'letter i', sourceFiles: [] },
 		});
 
 		// Assert all values are processed correctly
-		expect(processor.process(collection, extracted, existing).values).to.deep.equal({
+		expect(processor.process(draft, extracted, existing).values).to.deep.equal({
 			H: { value: 'letter H', sourceFiles: [] },
 			'f.r.o.g': { value: 'letter f', sourceFiles: [] },
+			// these two translation keys follow after `f.r.o.g` because in the `existing` translations it was ordered this way
 			'f.r.a.i.l': { value: 'letter f', sourceFiles: [] },
 			'f.r.a.y': { value: 'letter f', sourceFiles: [] },
 			C: { value: 'letter C', sourceFiles: [] },
 			e: { value: 'letter e', sourceFiles: [] },
 			'c.e.f': { value: 'letter c.e.f', sourceFiles: [] },
+			// this key is added after `c.e.f` because in the `existing` translations it was ordered this way
 			'c.e.d': { value: 'letter c.e.d', sourceFiles: [] },
 			i: { value: 'letter i', sourceFiles: [] },
 			B: { value: 'letter B', sourceFiles: [] },
+			// these translation keys are all added sorted to the end of the file
 			a: { value: 'letter a', sourceFiles: [] },
 			b: { value: 'letter b', sourceFiles: [] },
 			h: { value: 'letter h', sourceFiles: [] },
@@ -108,7 +92,7 @@ describe('SortByKeyPostProcessor - undefined sort sensitivity should sort as var
 		});
 
 		// Assert all keys are in the correct order
-		expect(processor.process(collection, extracted, existing).keys()).toStrictEqual([
+		expect(processor.process(draft, extracted, existing).keys()).toStrictEqual([
 			'H',
 			'f.r.o.g',
 			'f.r.a.i.l',

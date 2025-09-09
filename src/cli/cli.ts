@@ -21,6 +21,7 @@ import { CompilerFactory } from '../compilers/compiler.factory.js';
 import { normalizePaths } from '../utils/fs-helpers.js';
 import { FileCache } from '../cache/file-cache.js';
 import { TranslationType } from '../utils/translation.collection.js';
+import { SortByOriginalOrderPostProcessor } from '../post-processors/sort-by-original-order.post-processor.js';
 
 // First parsing pass to be able to access pattern argument for use input/output arguments
 const y = yargs().option('patterns', {
@@ -177,6 +178,13 @@ if (cli.cacheFile) {
 
 // Post processors
 const postProcessors: PostProcessorInterface[] = [];
+
+// sorting by original order done at the top because it references the existing translation keys list rather than the draft.
+// The draft is not used for this step, hence why any other changes by other post-processors would otherwise be discarded
+if (cli.sortOriginalOrder) {
+	postProcessors.push(new SortByOriginalOrderPostProcessor(cli.sortSensitivity));
+}
+
 if (cli.clean) {
 	postProcessors.push(new PurgeObsoleteKeysPostProcessor());
 }
@@ -195,10 +203,6 @@ if (cli.stripPrefix) {
 }
 
 if (cli.sort) {
-	postProcessors.push(new SortByKeyPostProcessor(cli.sortSensitivity));
-}
-
-if (cli.sortOriginalOrder) {
 	postProcessors.push(new SortByKeyPostProcessor(cli.sortSensitivity));
 }
 extractTask.setPostProcessors(postProcessors);
