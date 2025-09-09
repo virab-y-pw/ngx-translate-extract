@@ -9,6 +9,8 @@ type TranslationMatrix = {
  * This sorting post-processor adds the extracted translation keys into the order of the original file.
  *
  * This way a complete re-sort is avoided; this is just a temporary measure, down the line a complete re-sort is advisable.
+ *
+ * CAUTION: this post-processor is called at the beginning of the post-processing chain because it depends on the existing file translations order. (other post-processors only reference the draft)
  */
 export class SortByOriginalOrderPostProcessor implements PostProcessorInterface {
 	public name: string = 'SortByOriginalOrder';
