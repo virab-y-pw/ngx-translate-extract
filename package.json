@@ -1,6 +1,6 @@
 {
   "name": "@prewave/ngx-translate-extract",
-  "version": "9.4.2-prewavemod3",
+  "version": "9.4.2-prewavemod4",
   "description": "Extract strings from projects using ngx-translate",
   "author": "Kim Biesbjerg <kim@biesbjerg.com>",
   "license": "MIT",

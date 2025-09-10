@@ -40,8 +40,12 @@ export class SortByOriginalOrderPostProcessor implements PostProcessorInterface 
 				// check if it's the last part, then assign the key, otherwise nest key further
 				if (isLastIndex) {
 					path[keyPart] = keyParts;
-				} else {
-					path = path[keyPart] = {};
+				} else if (path[keyPart] === undefined) {
+					path[keyPart] = {};
+				}
+
+				if (!Array.isArray(path[keyPart])) {
+					path = path[keyPart];
 				}
 			});
 
@@ -62,8 +66,12 @@ export class SortByOriginalOrderPostProcessor implements PostProcessorInterface 
 				if (isNewKeyPart) {
 					if (isLastIndex) {
 						path[keyPart] = extractKeyParts;
-					} else {
-						path = path[keyPart] = {};
+					} else if (path[keyPart] === undefined) {
+						path[keyPart] = {};
+					}
+
+					if (!Array.isArray(path[keyPart])) {
+						path = path[keyPart];
 					}
 				} else {
 					// throw an error if the passed key cannot be nested due to structure of the existing keys
