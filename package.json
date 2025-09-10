@@ -1,6 +1,6 @@
 {
-  "name": "@vendure/ngx-translate-extract",
-  "version": "9.4.2",
+  "name": "@prewave/ngx-translate-extract",
+  "version": "9.4.2-prewavemod",
   "description": "Extract strings from projects using ngx-translate",
   "author": "Kim Biesbjerg <kim@biesbjerg.com>",
   "license": "MIT",
@@ -50,7 +50,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git@github.com:vendure-ecommerce/ngx-translate-extract.git"
+    "url": "git+ssh://git@github.com:virab-y-pw/ngx-translate-extract.git"
   },
   "keywords": [
     "angular",
@@ -64,14 +64,14 @@
     "gettext"
   ],
   "bugs": {
-    "url": "https://github.com/vendure-ecommerce/ngx-translate-extract/issues"
+    "url": "https://github.com/virab-y-pw/ngx-translate-extract/issues"
   },
-  "homepage": "https://github.com/vendure-ecommerce/ngx-translate-extract",
+  "homepage": "https://github.com/virab-y-pw/ngx-translate-extract",
   "engines": {
     "node": ">=18.13.0",
     "npm": ">=8"
   },
   "publishConfig": {
-    "registry": "https://nexus.prewave.ai/repository/network-npm"
+    "registry": "https://nexus.prewave.ai/repository/prewave-private-npm"
   }
 }
