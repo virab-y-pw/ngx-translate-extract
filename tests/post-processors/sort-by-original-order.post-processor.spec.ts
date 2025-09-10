@@ -60,11 +60,13 @@ describe('SortByKeyPostProcessor - undefined sort sensitivity should sort as var
 			b: { value: 'letter b', sourceFiles: [] },
 			a: { value: 'letter a', sourceFiles: [] },
 			à: { value: 'letter à', sourceFiles: [] },
+			'f.r.a.i.l': { value: 'letter f', sourceFiles: [] },
+			'f.r.a.y': { value: 'letter f', sourceFiles: [] },
 			h: { value: 'letter h', sourceFiles: [] },
 			B: { value: 'letter B', sourceFiles: [] },
 			H: { value: 'letter H', sourceFiles: [] },
-			'f.r.a.y': { value: 'letter f', sourceFiles: [] },
-			'f.r.a.i.l': { value: 'letter f', sourceFiles: [] },
+			'frog.r.a.y': { value: 'letter f', sourceFiles: [] },
+			'frog.r.a.i.l': { value: 'letter f', sourceFiles: [] },
 			C: { value: 'letter C', sourceFiles: [] },
 			e: { value: 'letter e', sourceFiles: [] },
 			i: { value: 'letter i', sourceFiles: [] },
@@ -87,6 +89,8 @@ describe('SortByKeyPostProcessor - undefined sort sensitivity should sort as var
 			// these translation keys are all added sorted to the end of the file
 			a: { value: 'letter a', sourceFiles: [] },
 			b: { value: 'letter b', sourceFiles: [] },
+			'frog.r.a.i.l': { value: 'letter f', sourceFiles: [] },
+			'frog.r.a.y': { value: 'letter f', sourceFiles: [] },
 			h: { value: 'letter h', sourceFiles: [] },
 			à: { value: 'letter à', sourceFiles: [] },
 		});
@@ -105,6 +109,8 @@ describe('SortByKeyPostProcessor - undefined sort sensitivity should sort as var
 			'B',
 			'a',
 			'b',
+			'frog.r.a.i.l',
+			'frog.r.a.y',
 			'h',
 			'à',
 		]);

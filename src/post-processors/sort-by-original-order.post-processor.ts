@@ -104,7 +104,7 @@ function isOfTypeSortSensitivity(keyInput: string | undefined): keyInput is 'bas
  * @param path
  */
 function flattenKeys(keysMatrix: TranslationMatrix, keysList: string[] = [], path: string[] = []): string[] {
-	Object.keys(keysMatrix).forEach(([keyPart]) => {
+	Object.keys(keysMatrix).forEach((keyPart) => {
 		const keyPath = path.concat(keyPart);
 
 		if (Array.isArray(keysMatrix[keyPart])) {
