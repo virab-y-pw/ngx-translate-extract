@@ -82,7 +82,10 @@ export class SortByOriginalOrderPostProcessor implements PostProcessorInterface 
 		// re-write the draft after the sorting
 		draft = new TranslationCollection(
 			flattenedKeys.reduce((acc, keyPath) => {
-				acc[keyPath] = extracted.get(keyPath) ?? existing.get(keyPath);
+				const existingTranslation = existing.get(keyPath);
+				const extractedTranslation = extracted.get(keyPath);
+
+				acc[keyPath] = existingTranslation ?? extractedTranslation;
 
 				return acc;
 			}, {} as TranslationType),
