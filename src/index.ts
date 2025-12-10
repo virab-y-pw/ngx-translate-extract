@@ -24,3 +24,5 @@ export * from './post-processors/purge-obsolete-keys.post-processor.js';
 export * from './post-processors/sort-by-key.post-processor.js';
 export * from './post-processors/sort-by-original-order.post-processor.js';
 export * from './post-processors/strip-prefix.post-processor.js';
+
+export * from './_extractors/ngx-translate-extract.js';

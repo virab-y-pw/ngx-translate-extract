@@ -1,5 +1,6 @@
 import { TranslationCollection, TranslationType } from '../utils/translation.collection.js';
 import { PostProcessorInterface } from './post-processor.interface.js';
+import { SortSensitivity } from '../utils/utils';
 
 type TranslationMatrix = {
 	[keyPart: string]: string[] | TranslationMatrix;
@@ -17,7 +18,7 @@ export class SortByOriginalOrderPostProcessor implements PostProcessorInterface 
 
 	// More information on sort sensitivity: https://tc39.es/ecma402/#sec-collator-comparestrings
 	// Passing undefined will be treated as 'variant' by default: https://tc39.es/ecma402/#sec-intl.collator
-	public sortSensitivity: 'base' | 'accent' | 'case' | 'variant' | undefined = undefined;
+	public sortSensitivity: SortSensitivity | undefined = undefined;
 
 	constructor(sortSensitivity: string | undefined) {
 		if (isOfTypeSortSensitivity(sortSensitivity)) {

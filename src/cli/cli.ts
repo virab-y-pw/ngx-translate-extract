@@ -1,27 +1,10 @@
 import yargs from 'yargs';
 import { green, red } from 'colorette';
 
-import { ExtractTask } from './tasks/extract.task.js';
-import { ParserInterface } from '../parsers/parser.interface.js';
-import { PipeParser } from '../parsers/pipe.parser.js';
-import { DirectiveParser } from '../parsers/directive.parser.js';
-import { ServiceParser } from '../parsers/service.parser.js';
-import { MarkerParser } from '../parsers/marker.parser.js';
-import { FunctionParser } from '../parsers/function.parser.js';
-import { PostProcessorInterface } from '../post-processors/post-processor.interface.js';
-import { SortByKeyPostProcessor } from '../post-processors/sort-by-key.post-processor.js';
-import { KeyAsDefaultValuePostProcessor } from '../post-processors/key-as-default-value.post-processor.js';
-import { KeyAsInitialDefaultValuePostProcessor } from '../post-processors/key-as-initial-default-value.post-processor.js';
-import { NullAsDefaultValuePostProcessor } from '../post-processors/null-as-default-value.post-processor.js';
-import { StringAsDefaultValuePostProcessor } from '../post-processors/string-as-default-value.post-processor.js';
-import { PurgeObsoleteKeysPostProcessor } from '../post-processors/purge-obsolete-keys.post-processor.js';
-import { StripPrefixPostProcessor } from '../post-processors/strip-prefix.post-processor.js';
-import { CompilerInterface, CompilerType } from '../compilers/compiler.interface.js';
-import { CompilerFactory } from '../compilers/compiler.factory.js';
+import { CompilerType } from '../compilers/compiler.interface.js';
 import { normalizePaths } from '../utils/fs-helpers.js';
-import { FileCache } from '../cache/file-cache.js';
-import { TranslationType } from '../utils/translation.collection.js';
-import { SortByOriginalOrderPostProcessor } from '../post-processors/sort-by-original-order.post-processor.js';
+import { CliArguments } from '../utils/utils.js';
+import { NgxTranslateExtract } from '../_extractors/ngx-translate-extract.js';
 
 // First parsing pass to be able to access pattern argument for use input/output arguments
 const y = yargs().option('patterns', {
@@ -35,7 +18,7 @@ const y = yargs().option('patterns', {
 
 const parsed = await y.parse();
 
-const cli = await y
+const options: CliArguments = await y
 	.usage('Extract strings from files for translation.\nUsage: $0 [options]')
 	.version(process.env.npm_package_version)
 	.alias('version', 'v')
@@ -47,7 +30,7 @@ const cli = await y
 		default: [process.env.PWD],
 		type: 'array',
 		normalize: true,
-		required: true
+		demandOption: true,
 	})
 	.coerce('input', (input: string[]) => normalizePaths(input, parsed.patterns))
 	.option('output', {
@@ -55,7 +38,7 @@ const cli = await y
 		describe: 'Paths where you would like to save extracted strings. You can use path expansion, glob patterns and multiple paths',
 		type: 'array',
 		normalize: true,
-		required: true
+		demandOption: true,
 	})
 	.coerce('output', (output: string[]) => normalizePaths(output, parsed.patterns))
 	.option('format', {
@@ -159,64 +142,12 @@ const cli = await y
 	.exitProcess(true)
 	.parse(process.argv);
 
-const extractTask = new ExtractTask(cli.input, cli.output, {
-	replace: cli.replace,
-});
-
-// Parsers
-const parsers: ParserInterface[] = [new PipeParser(), new DirectiveParser(), new ServiceParser()];
-if (cli.marker) {
-	parsers.push(new FunctionParser(cli.marker));
-} else {
-	parsers.push(new MarkerParser());
-}
-extractTask.setParsers(parsers);
-
-if (cli.cacheFile) {
-	extractTask.setCache(new FileCache<TranslationType[]>(cli.cacheFile));
-}
-
-// Post processors
-const postProcessors: PostProcessorInterface[] = [];
-
-// sorting by original order done at the top because it references the existing translation keys list rather than the draft.
-// The draft is not used for this step, hence why any other changes by other post-processors would otherwise be discarded
-if (cli.sortOriginalOrder) {
-	postProcessors.push(new SortByOriginalOrderPostProcessor(cli.sortSensitivity));
-}
-
-if (cli.clean) {
-	postProcessors.push(new PurgeObsoleteKeysPostProcessor());
-}
-if (cli.keyAsDefaultValue) {
-	postProcessors.push(new KeyAsDefaultValuePostProcessor());
-} else if (cli.keyAsInitialDefaultValue) {
-	postProcessors.push(new KeyAsInitialDefaultValuePostProcessor());
-} else if (cli.nullAsDefaultValue) {
-	postProcessors.push(new NullAsDefaultValuePostProcessor());
-} else if (cli.stringAsDefaultValue) {
-	postProcessors.push(new StringAsDefaultValuePostProcessor({ defaultValue: cli.stringAsDefaultValue as string }));
-}
-
-if (cli.stripPrefix) {
-	postProcessors.push(new StripPrefixPostProcessor({ prefix: cli.stripPrefix as string }));
-}
-
-if (cli.sort) {
-	postProcessors.push(new SortByKeyPostProcessor(cli.sortSensitivity));
-}
-extractTask.setPostProcessors(postProcessors);
-
-// Compiler
-const compiler: CompilerInterface = CompilerFactory.create(cli.format, {
-	indentation: cli.formatIndentation,
-	poSourceLocation: cli.poSourceLocations,
-});
-extractTask.setCompiler(compiler);
+const extractorInstance = new NgxTranslateExtract(options);
 
 // Run task
 try {
-	extractTask.execute();
+	extractorInstance.execute();
+
 	console.log(green('\nDone.\n'));
 	process.exit(0);
 } catch (e) {
