@@ -1,9 +1,7 @@
 import path from 'node:path';
 import fs from 'node:fs';
 
-import { ClassDeclaration, CallExpression, SourceFile } from 'typescript';
-import { resolveSync } from 'tsconfig';
-import JSON5 from 'json5';
+import { ClassDeclaration, CallExpression, SourceFile, findConfigFile, parseConfigFileTextToJson } from 'typescript';
 
 import { ParserInterface } from './parser.interface.js';
 import { TranslationCollection } from '../utils/translation.collection.js';
@@ -19,6 +17,7 @@ import {
 	getImportPath,
 	findFunctionExpressions,
 	findVariableNameByInjectType,
+	findInlineInjectCallExpressions,
 	getAST,
 	getNamedImport
 } from '../utils/ast-helpers.js';
@@ -45,7 +44,8 @@ export class ServiceParser implements ParserInterface {
 		functionDeclarations.forEach((fnDeclaration) => {
 			const translateServiceVariableName = findVariableNameByInjectType(fnDeclaration, TRANSLATE_SERVICE_TYPE_REFERENCE);
 			const callExpressions = findMethodCallExpressions(sourceFile, translateServiceVariableName, TRANSLATE_SERVICE_METHOD_NAMES);
-			translateServiceCallExpressions.push(...callExpressions);
+			const inlineInjectCallExpressions = findInlineInjectCallExpressions(sourceFile, TRANSLATE_SERVICE_TYPE_REFERENCE, TRANSLATE_SERVICE_METHOD_NAMES);
+			translateServiceCallExpressions.push(...callExpressions, ...inlineInjectCallExpressions);
 		});
 
 		classDeclarations.forEach((classDeclaration) => {
@@ -75,14 +75,24 @@ export class ServiceParser implements ParserInterface {
 			return [];
 		}
 		const paramName = findMethodParameterByType(constructorDeclaration, TRANSLATE_SERVICE_TYPE_REFERENCE);
-		return findMethodCallExpressions(constructorDeclaration, paramName, TRANSLATE_SERVICE_METHOD_NAMES);
+		const methodCallExpressions = findMethodCallExpressions(constructorDeclaration, paramName, TRANSLATE_SERVICE_METHOD_NAMES);
+		const inlineInjectCallExpressions = findInlineInjectCallExpressions(constructorDeclaration, TRANSLATE_SERVICE_TYPE_REFERENCE, TRANSLATE_SERVICE_METHOD_NAMES)
+		// Calls of the TranslateService when injected using the inject function within the constructor
+		const translateServiceLocalVariableName = findVariableNameByInjectType(constructorDeclaration, TRANSLATE_SERVICE_TYPE_REFERENCE);
+		const localVariableCallExpressions = translateServiceLocalVariableName
+			? findMethodCallExpressions(constructorDeclaration, translateServiceLocalVariableName, TRANSLATE_SERVICE_METHOD_NAMES)
+			: [];
+
+		return [...methodCallExpressions, ...localVariableCallExpressions, ...inlineInjectCallExpressions];
 	}
 
 	protected findPropertyCallExpressions(classDeclaration: ClassDeclaration, sourceFile: SourceFile): CallExpression[] {
-		const propNames = [
-			...findClassPropertiesByType(classDeclaration, TRANSLATE_SERVICE_TYPE_REFERENCE),
-			...this.findParentClassProperties(classDeclaration, sourceFile)
-		];
+		const propNames = findClassPropertiesByType(classDeclaration, TRANSLATE_SERVICE_TYPE_REFERENCE);
+
+		if (propNames.length === 0) {
+			propNames.push(...this.findParentClassProperties(classDeclaration, sourceFile));
+		}
+
 		return propNames.flatMap((name) => findPropertyCallExpressions(classDeclaration, name, TRANSLATE_SERVICE_METHOD_NAMES));
 	}
 
@@ -103,9 +113,9 @@ export class ServiceParser implements ParserInterface {
 		const superClassName = getNamedImport(ast, superClassNameOrAlias, importPath);
 		const currDir = path.join(path.dirname(ast.fileName), '/');
 
-		const key = `${currDir}|${importPath}`;
-		if (key in ServiceParser.propertyMap) {
-			return ServiceParser.propertyMap.get(key);
+		const cacheKey = `${currDir}|${importPath}`;
+		if (ServiceParser.propertyMap.has(cacheKey)) {
+			return ServiceParser.propertyMap.get(cacheKey);
 		}
 
 		let superClassPath: string;
@@ -118,10 +128,10 @@ export class ServiceParser implements ParserInterface {
 		} else {
 			// absolute import, use baseUrl if present
 			let baseUrl = currDir;
-			const tsconfigFilePath = resolveSync(currDir);
+			const tsconfigFilePath = findConfigFile(currDir, fs.existsSync);
 			if (tsconfigFilePath) {
-				const tsConfigFile = fs.readFileSync(tsconfigFilePath);
-				const config = JSON5.parse(tsConfigFile.toString());
+				const tsConfigFile = fs.readFileSync(tsconfigFilePath, { encoding: 'utf8' });
+				const config = parseConfigFileTextToJson(tsconfigFilePath, tsConfigFile).config;
 				const compilerOptionsBaseUrl = config.compilerOptions?.baseUrl ?? '';
 				baseUrl = path.resolve(path.dirname(tsconfigFilePath), compilerOptionsBaseUrl);
 			}
@@ -150,7 +160,7 @@ export class ServiceParser implements ParserInterface {
 			const superClassPropertyNames = superClassDeclarations
 				.flatMap((superClassDeclaration) => findClassPropertiesByType(superClassDeclaration, TRANSLATE_SERVICE_TYPE_REFERENCE));
 			if (superClassPropertyNames.length > 0) {
-				ServiceParser.propertyMap.set(file, superClassPropertyNames);
+				ServiceParser.propertyMap.set(cacheKey, superClassPropertyNames);
 				allSuperClassPropertyNames.push(...superClassPropertyNames);
 			} else {
 				superClassDeclarations.forEach((declaration) =>

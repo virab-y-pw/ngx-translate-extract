@@ -6,7 +6,7 @@
 
 > Angular translations extractor (plugin for [@ngx-translate](https://github.com/ngx-translate/core))
 
-> ✓ _Compatible with client-side rendering (CSR) and server-side rendering (SSR)_
+> ✓ _Compatible with server-side rendering (SSR/SSG)_
 
 Extract translatable (ngx-translate) strings and save as a JSON or Gettext pot file.
 Merges with existing strings if the output file already exists.
@@ -28,11 +28,12 @@ yarn add @vendure/ngx-translate-extract --dev
 
 Choose the version corresponding to your Angular version:
 
-| Angular    | ngx-translate-extract                                                                      |
-| ---------- | ------------------------------------------------------------------------------------------ |
-| >=17       | 9.x                                                                                        |
-| 13 – 16    | 8.x                                                                                        |
-| 8  – 12    | [@biesbjerg/ngx-translate-extract](https://github.com/biesbjerg/ngx-translate-extract) 7.x |
+| Angular | ngx-translate-extract                                                                      |
+|---------|--------------------------------------------------------------------------------------------|
+| >= 20   | 10.x                                                                                       |
+| 17 - 19 | 9.x                                                                                        |
+| 13 – 16 | 8.x                                                                                        |
+| 8  – 12 | [@biesbjerg/ngx-translate-extract](https://github.com/biesbjerg/ngx-translate-extract) 7.x |
 
 Add a script to your project's `package.json`:
 
@@ -146,10 +147,11 @@ Output
   --format, -f                Format        [string] [choices: "json", "namespaced-json", "pot"] [default: "json"]
   --format-indentation, --fi  Format indentation (JSON/Namedspaced JSON)                  [string] [default: "\t"]
   --sort, -s                  Sort strings in alphabetical order                                         [boolean]
-  --sort-sensitivity, -ss     Sensitivity when sorting strings (only when sort is enabled)               [string]
+  --sort-sensitivity, -ss     Sensitivity when sorting strings (only when sort is enabled)                [string]
   --clean, -c                 Remove obsolete strings after merge                                        [boolean]
   --replace, -r               Replace the contents of output file if it exists (Merges by default)       [boolean]
   --strip-prefix, -sp         Strip prefix from key                                                       [string]
+  --trailing-newline          Add a trailing newline to the output.                                      [boolean]
   --po-source-locations       Include file location comments in .po files                [boolean] [default: true]
 
 Extracted key value (defaults to empty string)

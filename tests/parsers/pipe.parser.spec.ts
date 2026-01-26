@@ -304,6 +304,43 @@ describe('PipeParser', () => {
 		expect(keys).to.deep.equal([`Hello`, `World`]);
 	});
 
+	it('should extract key from translate pipe inside `AND` expressions', () => {
+		const singleCondition = `<div>{{ someProp() && 'translation.key' | translate }}</div>`;
+		const singleConditionKeys = parser.extract(singleCondition, templateFilename).keys();
+		expect(singleConditionKeys).to.deep.equal(['translation.key']);
+
+		const multipleConditions = `<div>{{ someProp() && anotherProp() && 'translation.key' | translate }}</div>`;
+		const multipleConditionKeys = parser.extract(multipleConditions, templateFilename).keys();
+		expect(multipleConditionKeys).to.deep.equal(['translation.key']);
+	});
+
+	it('should extract key from translate pipe inside `OR` expressions', () => {
+		const singleCondition = `<div>{{ someProp() || 'translation.key' | translate }}</div>`;
+		const singleConditionKeys = parser.extract(singleCondition, templateFilename).keys();
+		expect(singleConditionKeys).to.deep.equal(['translation.key']);
+
+		const multipleConditions = `<div>{{ someProp() || anotherProp() || 'translation.key' | translate }}</div>`;
+		const multipleConditionKeys = parser.extract(multipleConditions, templateFilename).keys();
+		expect(multipleConditionKeys).to.deep.equal(['translation.key']);
+	});
+
+	it('should extract key from translate pipe inside nullish coalescing expressions', () => {
+		const singleCondition = `<div>{{ someProp() ?? 'translation.key' | translate }}</div>`;
+		const singleConditionKeys = parser.extract(singleCondition, templateFilename).keys();
+		expect(singleConditionKeys).to.deep.equal(['translation.key']);
+
+		const multipleConditions = `<div>{{ someProp() ?? anotherProp() ?? 'translation.key' | translate }}</div>`;
+		const multipleConditionKeys = parser.extract(multipleConditions, templateFilename).keys();
+		expect(multipleConditionKeys).to.deep.equal(['translation.key']);
+	});
+
+	it('should not extract empty strings as keys', () => {
+		const contents = `<div>{{ '' | translate }}</div>`;
+		const keys = parser.extract(contents, templateFilename).keys();
+
+		expect(keys).toEqual([]);
+	});
+
 	describe('Built-in control flow', () => {
 		it('should extract keys from elements inside an @if/@else block', () => {
 			const contents = `
@@ -340,6 +377,23 @@ describe('PipeParser', () => {
 				  {{ 'switch.caseA' | translate }}
 				}
 				@case (caseB) {
+				  {{ 'switch.caseB' | translate }}
+				}
+				@default {
+				  {{ 'switch.default' | translate }}
+				}
+			  }`;
+
+			const keys = parser.extract(contents, templateFilename).keys();
+			expect(keys).to.deep.equal(['switch.caseA', 'switch.caseB', 'switch.default']);
+		});
+
+		it('should extract keys from elements inside an @switch/@case block with multiple matching cases' ,() => {
+			const contents = `
+			@switch (condition) {
+				@case (caseA)
+				@case (caseB) {
+				  {{ 'switch.caseA' | translate }}
 				  {{ 'switch.caseB' | translate }}
 				}
 				@default {

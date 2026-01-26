@@ -17,9 +17,11 @@ import {
 	TmplAstElement,
 	KeyedRead,
 	ASTWithSource,
+	ParenthesizedExpression,
 } from '@angular/compiler';
 
 import { ParserInterface } from './parser.interface.js';
+import { getNodesFromSwitchBlockTmpl } from '../utils/ast-helpers.js';
 import { TranslationCollection } from '../utils/translation.collection.js';
 import { isPathAngularComponent, extractComponentInlineTemplate } from '../utils/utils.js';
 
@@ -71,7 +73,8 @@ function traverseAstNode<RESULT, NODE extends TmplAstNode | TmplAstElement>(
 
 	// contents of @case blocks (ignoring the @switch(...) statement though)
 	if (node instanceof TmplAstSwitchBlock) {
-		children.push(...node.cases.flatMap((inner) => inner.children));
+		const blockChildren = getNodesFromSwitchBlockTmpl(node);
+		children.push(...blockChildren);
 	}
 
 	return traverseAstNodes(children, visitor, accumulator);
@@ -90,6 +93,9 @@ export class PipeParser implements ParserInterface {
 
 		pipes.forEach((pipe) => {
 			this.parseTranslationKeysFromPipe(pipe).forEach((key) => {
+				if (key === '') {
+					return;
+				}
 				collection = collection.add(key, '', filePath);
 			});
 		});
@@ -138,6 +144,15 @@ export class PipeParser implements ParserInterface {
 			ret.push(...this.parseTranslationKeysFromPipe(pipeContent.falseExp));
 		} else if (pipeContent instanceof BindingPipe) {
 			ret.push(...this.parseTranslationKeysFromPipe(pipeContent.exp));
+		} else if (pipeContent instanceof ParenthesizedExpression) {
+			ret.push(...this.parseTranslationKeysFromPipe(pipeContent.expression));
+		} else if (this.isLogicalOrNullishCoalescingExpression(pipeContent)) {
+			if (pipeContent.left instanceof LiteralPrimitive) {
+				ret.push(`${pipeContent.left.value}`);
+			}
+			if (pipeContent.right instanceof LiteralPrimitive) {
+				ret.push(`${pipeContent.right.value}`);
+			}
 		}
 		return ret;
 	}
@@ -208,6 +223,10 @@ export class PipeParser implements ParserInterface {
 			return this.getTranslatablesFromAsts([ast.receiver, ast.key]);
 		}
 
+		if(ast instanceof ParenthesizedExpression) {
+			return this.getTranslatablesFromAsts([ast.expression]);
+		}
+
 		return [];
 	}
 
@@ -221,5 +240,13 @@ export class PipeParser implements ParserInterface {
 
 	protected parseTemplate(template: string, path: string): TmplAstNode[] {
 		return parseTemplate(template, path).nodes;
+	}
+
+	/** Checks whether a Binary node uses a logical (&&, ||) or nullish coalescing (??) operator. */
+	protected isLogicalOrNullishCoalescingExpression(expr: unknown): expr is Binary {
+		return (
+			expr instanceof Binary &&
+			(expr.operation === '&&' || expr.operation === '||' || expr.operation === '??')
+		);
 	}
 }

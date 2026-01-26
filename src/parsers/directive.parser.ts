@@ -19,10 +19,12 @@ import {
 	TmplAstIfBlock,
 	TmplAstSwitchBlock,
 	TmplAstForLoopBlock,
-	TmplAstDeferredBlock
+	TmplAstDeferredBlock,
+	ParenthesizedExpression,
 } from '@angular/compiler';
 
 import { ParserInterface } from './parser.interface.js';
+import { getNodesFromSwitchBlockTmpl } from '../utils/ast-helpers.js';
 import { TranslationCollection } from '../utils/translation.collection.js';
 import { extractComponentInlineTemplate, isPathAngularComponent } from '../utils/utils.js';
 
@@ -58,7 +60,7 @@ export class DirectiveParser implements ParserInterface {
 			const boundAttribute = this.getBoundAttribute(element, TRANSLATE_ATTR_NAMES);
 			if (boundAttribute?.value) {
 				this.getLiteralPrimitives(boundAttribute.value).forEach((literalPrimitive) => {
-					collection = collection.add(literalPrimitive.value, '', filePath);
+					collection = collection.add(literalPrimitive.value.toString(), '', filePath);
 				});
 				return;
 			}
@@ -107,7 +109,7 @@ export class DirectiveParser implements ParserInterface {
 		}
 
 		if (blockNode instanceof TmplAstSwitchBlock) {
-			blockChildren = blockNode.cases.map((branch) => branch.children).flat();
+			blockChildren = getNodesFromSwitchBlockTmpl(blockNode);
 		}
 
 		if (blockNode instanceof TmplAstForLoopBlock) {
@@ -167,7 +169,7 @@ export class DirectiveParser implements ParserInterface {
 	 * @param names
 	 */
 	protected getBoundAttribute(element: ElementLike, names: string[]): BoundAttribute {
-		return element.inputs.find((input) => names.includes(input.name));
+		return element.inputs.find((input) => !input.keySpan.details.startsWith('attr.') && names.includes(input.name));
 	}
 
 	/**
@@ -194,6 +196,8 @@ export class DirectiveParser implements ParserInterface {
 			visit = [exp.left, exp.right];
 		} else if (exp instanceof ASTWithSource) {
 			visit = [exp.ast];
+		} else if (exp instanceof ParenthesizedExpression) {
+			visit = [exp.expression];
 		}
 
 		let results: LiteralPrimitive[] = [];
@@ -220,7 +224,7 @@ export class DirectiveParser implements ParserInterface {
 			Object.hasOwn(node, 'nameSpan') &&
 			Object.hasOwn(node, 'sourceSpan') &&
 			Object.hasOwn(node, 'startSourceSpan') &&
-			Object.hasOwn(node, 'endSourceSpan') 
+			Object.hasOwn(node, 'endSourceSpan')
 		);
 	}
 

@@ -1,5 +1,4 @@
 import yargs from 'yargs';
-import { green, red } from 'colorette';
 
 import { ExtractTask } from './tasks/extract.task.js';
 import { ParserInterface } from '../parsers/parser.interface.js';
@@ -18,6 +17,7 @@ import { PurgeObsoleteKeysPostProcessor } from '../post-processors/purge-obsolet
 import { StripPrefixPostProcessor } from '../post-processors/strip-prefix.post-processor.js';
 import { CompilerInterface, CompilerType } from '../compilers/compiler.interface.js';
 import { CompilerFactory } from '../compilers/compiler.factory.js';
+import { green, red } from '../utils/cli-color.js';
 import { normalizePaths } from '../utils/fs-helpers.js';
 import { FileCache } from '../cache/file-cache.js';
 import { TranslationType } from '../utils/translation.collection.js';
@@ -37,7 +37,7 @@ const parsed = await y.parse();
 
 const cli = await y
 	.usage('Extract strings from files for translation.\nUsage: $0 [options]')
-	.version(process.env.npm_package_version)
+	.version()
 	.alias('version', 'v')
 	.help('help')
 	.alias('help', 'h')
@@ -47,7 +47,7 @@ const cli = await y
 		default: [process.env.PWD],
 		type: 'array',
 		normalize: true,
-		required: true
+		demandOption: true
 	})
 	.coerce('input', (input: string[]) => normalizePaths(input, parsed.patterns))
 	.option('output', {
@@ -55,7 +55,7 @@ const cli = await y
 		describe: 'Paths where you would like to save extracted strings. You can use path expansion, glob patterns and multiple paths',
 		type: 'array',
 		normalize: true,
-		required: true
+		demandOption: true
 	})
 	.coerce('output', (output: string[]) => normalizePaths(output, parsed.patterns))
 	.option('format', {
@@ -141,11 +141,13 @@ const cli = await y
 		describe: 'Strip a prefix from the extracted key',
 		type: 'string',
 	})
-	.group(['format', 'format-indentation', 'sort', 'sort-sensitivity', 'clean', 'replace', 'strip-prefix', 'po-source-locations'], 'Output')
-	.group(
-		['key-as-default-value', 'key-as-initial-default-value', 'null-as-default-value', 'string-as-default-value'],
-		'Extracted key value (defaults to empty string)',
-	)
+	.option('trailing-newline', {
+		describe: 'Add a trailing newline to the output',
+		type: 'boolean',
+		default: false
+	})
+	.group(['format', 'format-indentation', 'sort', 'sort-sensitivity', 'clean', 'replace', 'strip-prefix', 'trailing-newline', 'po-source-locations'], 'Output')
+	.group(['key-as-default-value', 'key-as-initial-default-value', 'null-as-default-value', 'string-as-default-value'], 'Extracted key value (defaults to empty string)')
 	.conflicts('key-as-default-value', 'null-as-default-value')
 	.conflicts('key-as-initial-default-value', 'null-as-default-value')
 	.example('$0 -i ./src-a/ -i ./src-b/ -o strings.json', 'Extract (ts, html) from multiple paths')
@@ -210,6 +212,7 @@ extractTask.setPostProcessors(postProcessors);
 // Compiler
 const compiler: CompilerInterface = CompilerFactory.create(cli.format, {
 	indentation: cli.formatIndentation,
+	trailingNewline: cli.trailingNewline,
 	poSourceLocation: cli.poSourceLocations,
 });
 extractTask.setCompiler(compiler);

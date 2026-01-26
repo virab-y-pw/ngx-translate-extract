@@ -44,6 +44,12 @@ describe('DirectiveParser', () => {
 				expect(keys).to.deep.equal(['KEY1']);
 			});
 
+			it('should not extract keys when using attr style attribute', () => {
+				const contents = `<div [attr.${translateAttrName}]="'KEY1'"></div>`;
+				const keys = parser.extract(contents, templateFilename).keys();
+				expect(keys).to.deep.equal([]);
+			});
+
 			it('should extract keys when using conditional in bound attribute', () => {
 				const contents = `<div [${translateAttrName}]="condition ? 'KEY1' : 'KEY2'"></div>`;
 				const keys = parser.extract(contents, templateFilename).keys();
@@ -207,6 +213,24 @@ describe('DirectiveParser', () => {
 								<p ${translateAttrName}>switch.caseA</p>
 							}
 							@case (caseB) {
+								<p ${translateAttrName}>switch.caseB</p>
+							}
+							@default {
+								<p ${translateAttrName}>switch.default</p>
+							}
+						}
+					`;
+
+					const keys = parser.extract(contents, templateFilename).keys();
+					expect(keys).to.deep.equal(['switch.caseA', 'switch.caseB', 'switch.default']);
+				});
+
+				it('should extract keys from elements inside an @switch/@case block with multiple matching cases', () => {
+					const contents = `
+						@switch (condition) {
+							@case (caseA)
+							@case (caseB) {
+								<p ${translateAttrName}>switch.caseA</p>
 								<p ${translateAttrName}>switch.caseB</p>
 							}
 							@default {

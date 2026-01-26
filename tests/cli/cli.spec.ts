@@ -12,7 +12,7 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 const REPOSITORY_ROOT = resolve(__dirname, '../..');
 const FIXTURES_PATH = resolve(REPOSITORY_ROOT, 'tests/cli/fixtures/');
 const TMP_PATH = resolve(REPOSITORY_ROOT, 'tests/cli/tmp');
-const CLI_PATH = resolve(TMP_PATH, 'dist/cli/cli.js');
+const CLI_PATH = resolve(TMP_PATH, 'dist/cli.js');
 
 let nextFileId = 0;
 const createUniqueFileName = (fileName: string) => resolve(TMP_PATH, `${nextFileId++}-${fileName}`);
@@ -20,7 +20,7 @@ const createUniqueFileName = (fileName: string) => resolve(TMP_PATH, `${nextFile
 describe.concurrent('CLI Integration Tests', () => {
 	beforeAll(async () => {
 		try {
-			await execAsync(`npm run build -- --outDir ${TMP_PATH}/dist`);
+			await execAsync(`npm run build:dev -- --outDir ${TMP_PATH}/dist`);
 		} catch (err) {
 			console.error('Error during build in beforeAll:', err);
 			throw err;
@@ -30,6 +30,13 @@ describe.concurrent('CLI Integration Tests', () => {
 	afterAll(async () => {
 		await rm(TMP_PATH, { recursive: true });
 	});
+
+	test('shows the version', async ({expect}) => {
+		const packageJson = JSON.parse(await readFile(resolve(REPOSITORY_ROOT, 'package.json'), 'utf8'));
+		const { stdout } = await execAsync(`node ${CLI_PATH} --version`);
+
+		expect(stdout.trim()).toBe(packageJson.version);
+	})
 
 	test('shows the expected output when extracting', async ({expect}) => {
 		const OUTPUT_FILE = createUniqueFileName('strings.json');

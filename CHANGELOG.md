@@ -1,5 +1,43 @@
 # Changelog
 
+## v10.1.3 (2026-01-23)
+
+- Fix parsing of `@switch` blocks in pipe and directive parser for Angular v21.1 ([#126](https://github.com/vendurehq/ngx-translate-extract/issues/126))
+
+## v10.1.2 (2025-12-04)
+
+- Fix directive parser incorrectly extracting strings from attribute bindings (e.g. `[attr.translate]`), as these are not processed by `ngx-translate` ([#121](https://github.com/vendure-ecommerce/ngx-translate-extract/issues/121))
+
+## v10.1.1 (2025-11-17)
+
+- Fix service parser incorrectly extracting strings from method calls on non-`TranslateService` types ([#116](https://github.com/vendure-ecommerce/ngx-translate-extract/issues/116))
+- Fix service parser not detecting keys when `TranslateService` is provided via `inject()` inside the constructor ([#113](https://github.com/vendure-ecommerce/ngx-translate-extract/issues/113))
+- Replace `tsconfig` and `JSON5` packages with TypeScript's built-in configuration utilities ([#115](https://github.com/vendure-ecommerce/ngx-translate-extract/issues/115))
+- Replace `colorette` with Node's built-in `util.styleText` ([#112](https://github.com/vendure-ecommerce/ngx-translate-extract/issues/112))
+
+## v10.1.0 (2025-09-09)
+
+- Add new `--trailing-newline` option to control whether a trailing newline is added to the output ([#104](https://github.com/vendure-ecommerce/ngx-translate-extract/issues/104))
+- Exclude empty strings from extracted keys ([#105](https://github.com/vendure-ecommerce/ngx-translate-extract/issues/105))
+
+## v10.0.1 (2025-07-29)
+
+- Avoid redundant property lookups on parent class in service parser ([#99](https://github.com/vendure-ecommerce/ngx-translate-extract/pull/99))
+- Locate `package.json` in new location for the `--cache-file` option ([#96](https://github.com/vendure-ecommerce/ngx-translate-extract/pull/96))
+- Fix version resolution for the `--version` option ([#97](https://github.com/vendure-ecommerce/ngx-translate-extract/issues/97))
+- Fix parser not detecting keys when the `translate` pipe is used within logical expressions (`&&`, `||`, `??`) ([#94](https://github.com/vendure-ecommerce/ngx-translate-extract/issues/94))
+
+## v10.0.0 (2025-07-11)
+
+- Add support for Angular 20 ([#77](https://github.com/vendure-ecommerce/ngx-translate-extract/pull/77))
+- Add trailing newline to `.po` output files to ensure POSIX compliance ([#70](https://github.com/vendure-ecommerce/ngx-translate-extract/pull/70))
+
+**BREAKING CHANGES**
+
+- Minimum Angular version required is now 20.
+- Minimum Node.js version required is now v20.19.0 to align with Angular 20 requirements.
+- Minimum TypeScript version required is now v5.8 to align with Angular 20 requirements.
+
 ## v9.4.2 (2025-06-30)
 
 - Prevent overwriting of existing translations in namespaced-json format ([#85](https://github.com/vendure-ecommerce/ngx-translate-extract/pull/85))
