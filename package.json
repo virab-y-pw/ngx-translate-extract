@@ -63,6 +63,6 @@
     "npm": ">=10"
   },
   "publishConfig": {
-    "registry": "https://nexus.prewave.ai/repository/prewave-private-npm"
+    "registry": "https://europe-west1-npm.pkg.dev/pw-infra-common/prewave-private-npm"
   }
 }
